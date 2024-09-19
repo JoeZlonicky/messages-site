@@ -1,7 +1,6 @@
 import './App.css';
-import './assets/bootstrap.css';
+import './assets/style.css';
 import { useState } from 'react';
-import { Button } from 'react-bootstrap';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -9,7 +8,7 @@ function App() {
   return (
     <>
       <h1>Hello, world!</h1>
-      <Button onClick={() => setCount(count + 1)}>Count {count}</Button>
+      <button className="btn btn-primary" onClick={() => setCount(count + 1)}>Count {count}</button>
     </>
   );
 }
