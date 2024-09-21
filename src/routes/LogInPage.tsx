@@ -1,4 +1,5 @@
-import { logIn } from '../api/logIn';
+import { logIn } from '../api/calls/logIn';
+import { useUser } from '../hooks/useUser';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -7,6 +8,7 @@ function LogInPage() {
   const [infoMessage, setInfoMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const { userDispatch } = useUser();
 
   const handleFormChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -20,7 +22,8 @@ function LogInPage() {
 
     const result = await logIn(formData.username, formData.password);
 
-    if (result.success) {
+    if (result.success && result.user) {
+      userDispatch({ type: 'logIn', user: result.user });
       navigate('/');
     }
 

@@ -1,5 +1,6 @@
-import { Message } from '../types/Message';
-import { api } from './api';
+import { Message } from '../../types/Message';
+import { api } from '../api';
+import { throwIfNoAuth } from '../throwIfNoAuth';
 
 type GetServerMessagesResult = {
   success: boolean;
@@ -11,7 +12,8 @@ async function getServerMessages(): Promise<GetServerMessagesResult> {
     const response = await api.get('/messages?toUserId=-1');
     const messages = response.data as Message[];
     return { success: true, messages };
-  } catch {
+  } catch (error) {
+    throwIfNoAuth(error);
     return { success: false };
   }
 }

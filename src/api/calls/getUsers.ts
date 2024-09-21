@@ -1,5 +1,6 @@
-import { User } from '../types/User';
-import { api } from './api';
+import { User } from '../../types/User';
+import { api } from '../api';
+import { throwIfNoAuth } from '../throwIfNoAuth';
 
 type GetUsersResult = {
   success: boolean;
@@ -11,7 +12,8 @@ async function getUsers(): Promise<GetUsersResult> {
     const response = await api.get('/users');
     const users = response.data as User[];
     return { success: true, users };
-  } catch {
+  } catch (error) {
+    throwIfNoAuth(error);
     return { success: false };
   }
 }

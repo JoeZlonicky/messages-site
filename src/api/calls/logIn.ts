@@ -1,9 +1,11 @@
-import { api } from './api';
+import { User } from '../../types/User';
+import { api } from '../api';
 import { AxiosError } from 'axios';
 
 type LogInResult = {
   success: boolean;
   message?: string;
+  user?: User;
 };
 
 function getBadRequestErrors(error: AxiosError) {
@@ -21,8 +23,9 @@ function getBadRequestErrors(error: AxiosError) {
 
 async function logIn(username: string, password: string): Promise<LogInResult> {
   try {
-    await api.post('/sessions', { username, password });
-    return { success: true };
+    const response = await api.post('/sessions', { username, password });
+    const user = response.data as User;
+    return { success: true, user };
   } catch (error) {
     let message = 'Unknown error!';
     if (error instanceof AxiosError) {
