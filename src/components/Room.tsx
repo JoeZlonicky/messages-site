@@ -3,6 +3,7 @@ import { getServerMessages } from '../api/calls/getServerMessages';
 import { GetMessagesResult } from '../types/GetMessagesResult';
 import { Message } from '../types/Message';
 import { User } from '../types/User';
+import { SendMessageBox } from './SendMessageBox';
 import { useCallback, useEffect, useState } from 'react';
 
 type RoomProps = {
@@ -54,6 +55,10 @@ function Room({ roomId, user, allUsers }: RoomProps) {
           })}
         </div>
       )}
+      <SendMessageBox
+        toUserId={roomId}
+        addSentMessage={(message) => setMessages([...messages, message])}
+      />
     </div>
   );
 }
