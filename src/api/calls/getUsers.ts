@@ -1,21 +1,21 @@
 import { User } from '../../types/User';
 import { api } from '../api';
-import { throwIfNoAuth } from '../throwIfNoAuth';
+import { redirectIfNoAuth } from '../redirectIfNoAuth';
 
 type GetUsersResult = {
   success: boolean;
   users?: User[];
 };
 
-async function getUsers(): Promise<GetUsersResult> {
+async function getAllUsers(): Promise<GetUsersResult> {
   try {
     const response = await api.get('/users');
     const users = response.data as User[];
     return { success: true, users };
   } catch (error) {
-    throwIfNoAuth(error);
+    redirectIfNoAuth(error);
     return { success: false };
   }
 }
 
-export { getUsers };
+export { getAllUsers };

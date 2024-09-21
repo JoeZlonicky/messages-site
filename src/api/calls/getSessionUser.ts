@@ -1,6 +1,6 @@
 import { User } from '../../types/User';
 import { api } from '../api';
-import { throwIfNoAuth } from '../throwIfNoAuth';
+import { redirectIfNoAuth } from '../redirectIfNoAuth';
 
 type GetSessionUserResult = {
   success: boolean;
@@ -13,7 +13,7 @@ async function getSessionUser(): Promise<GetSessionUserResult> {
     const user = response.data as User;
     return { success: true, user };
   } catch (error) {
-    throwIfNoAuth(error);
+    redirectIfNoAuth(error);
     return { success: false };
   }
 }
