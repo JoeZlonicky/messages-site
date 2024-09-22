@@ -27,7 +27,7 @@ function SendMessageBox({ toUserId, addSentMessage }: SendMessageBoxProps) {
         void attemptSendMessage(event);
       }}
     >
-      <div className="flex">
+      <div className="my-2 flex gap-2">
         <input
           value={message}
           onChange={(event) => setMessage(event.target.value)}

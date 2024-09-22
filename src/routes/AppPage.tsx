@@ -5,6 +5,7 @@ import { ServerPanel } from '../components/ServerPanel';
 import { useUser } from '../hooks/useUser';
 import { User } from '../types/User';
 import { useEffect, useState } from 'react';
+import { Socket, io } from 'socket.io-client';
 
 function AppPage() {
   const {
@@ -18,6 +19,12 @@ function AppPage() {
   useEffect(() => {
     const fetchUserIfNeeded = async () => {
       if (user) {
+        const socket = io(import.meta.env.VITE_MESSAGES_API_URL, {
+          withCredentials: true,
+        });
+        socket.on('message', (message) => {
+          console.log(message);
+        });
         return;
       }
 
@@ -25,6 +32,12 @@ function AppPage() {
       const result = await getSessionUser();
       if (result.success && result.user) {
         userDispatch({ type: 'logIn', user: result.user });
+        const socket = io(import.meta.env.VITE_MESSAGES_API_URL, {
+          withCredentials: true,
+        });
+        socket.on('message', (message) => {
+          console.log(message);
+        });
       } else {
         setLoadingStatus('Failed to load.');
       }
@@ -46,7 +59,7 @@ function AppPage() {
   }
 
   return (
-    <div className="flex gap-8">
+    <div className="flex">
       <ServerPanel user={user} allUsers={allUsers} setRoomId={setRoomId} />
       <Room roomId={roomId} user={user} allUsers={allUsers} />
     </div>

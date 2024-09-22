@@ -40,8 +40,12 @@ function Room({ roomId, user, allUsers }: RoomProps) {
   }, [roomId, user]);
 
   return (
-    <div>
-      <h2 className="text-3xl">Messages</h2>
+    <div className="p-4">
+      <h2 className="text-3xl">
+        {roomId === -1
+          ? 'Server Messages'
+          : `Messages with ${getToUser()?.displayName}`}
+      </h2>
       {messages.length == 0 ? (
         <div>No messages!</div>
       ) : (
