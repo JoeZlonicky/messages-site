@@ -1,6 +1,3 @@
-import { getDirectMessages } from '../api/calls/getDirectMessages';
-import { getServerMessages } from '../api/calls/getServerMessages';
-import { GetMessagesResult } from '../types/GetMessagesResult';
 import { Message } from '../types/Message';
 import { User } from '../types/User';
 import { SendMessageBox } from './SendMessageBox';
@@ -10,34 +7,32 @@ type RoomProps = {
   roomId: number;
   user: User;
   allUsers: User[];
+  messagesInRoom: Map<number, Message[]>;
+  updateMessagesInRoom: (roomId: number, userId: number) => Promise<void>;
+  addMessageToRoom: (roomId: number, newMessage: Message) => void;
 };
 
-function Room({ roomId, user, allUsers }: RoomProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+function Room({
+  roomId,
+  user,
+  allUsers,
+  messagesInRoom,
+  updateMessagesInRoom,
+  addMessageToRoom,
+}: RoomProps) {
   const getToUser = useCallback(() => {
     const found = allUsers.find((otherUser) => otherUser.id === roomId);
     return found;
   }, [roomId]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      let result: GetMessagesResult;
-      if (roomId === -1) {
-        result = await getServerMessages();
-      } else {
-        const toUser = getToUser();
-        if (!toUser) {
-          throw new Error('Corresponding user not found for room');
-        }
-        result = await getDirectMessages(user.id, toUser.id);
-      }
-      if (result.success && result.messages) {
-        setMessages(result.messages);
-      }
-    };
-
-    void fetchMessages();
+    void updateMessagesInRoom(roomId, user.id);
   }, [roomId, user]);
+
+  const messages = messagesInRoom.get(roomId);
+  if (!messages) {
+    return <>Loading messages...</>;
+  }
 
   return (
     <div className="p-4">
@@ -61,7 +56,7 @@ function Room({ roomId, user, allUsers }: RoomProps) {
       )}
       <SendMessageBox
         toUserId={roomId}
-        addSentMessage={(message) => setMessages([...messages, message])}
+        addSentMessage={(message) => addMessageToRoom(roomId, message)}
       />
     </div>
   );

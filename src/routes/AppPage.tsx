@@ -2,10 +2,10 @@ import { getSessionUser } from '../api/calls/getSessionUser';
 import { getAllUsers } from '../api/calls/getUsers';
 import { Room } from '../components/Room';
 import { ServerPanel } from '../components/ServerPanel';
+import { useMessages } from '../hooks/useMessages';
 import { useUser } from '../hooks/useUser';
 import { User } from '../types/User';
 import { useEffect, useState } from 'react';
-import { Socket, io } from 'socket.io-client';
 
 function AppPage() {
   const {
@@ -15,16 +15,12 @@ function AppPage() {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [roomId, setRoomId] = useState(-1);
   const [loadingStatus, setLoadingStatus] = useState('Loading...');
+  const [messagesInRoom, updateMessagesInRoom, addMessageToRoom] =
+    useMessages();
 
   useEffect(() => {
     const fetchUserIfNeeded = async () => {
       if (user) {
-        const socket = io(import.meta.env.VITE_MESSAGES_API_URL, {
-          withCredentials: true,
-        });
-        socket.on('message', (message) => {
-          console.log(message);
-        });
         return;
       }
 
@@ -32,12 +28,6 @@ function AppPage() {
       const result = await getSessionUser();
       if (result.success && result.user) {
         userDispatch({ type: 'logIn', user: result.user });
-        const socket = io(import.meta.env.VITE_MESSAGES_API_URL, {
-          withCredentials: true,
-        });
-        socket.on('message', (message) => {
-          console.log(message);
-        });
       } else {
         setLoadingStatus('Failed to load.');
       }
@@ -58,10 +48,19 @@ function AppPage() {
     return <>{loadingStatus}</>;
   }
 
+  console.log(messagesInRoom);
+
   return (
     <div className="flex">
       <ServerPanel user={user} allUsers={allUsers} setRoomId={setRoomId} />
-      <Room roomId={roomId} user={user} allUsers={allUsers} />
+      <Room
+        roomId={roomId}
+        user={user}
+        allUsers={allUsers}
+        messagesInRoom={messagesInRoom}
+        updateMessagesInRoom={updateMessagesInRoom}
+        addMessageToRoom={addMessageToRoom}
+      />
     </div>
   );
 }
