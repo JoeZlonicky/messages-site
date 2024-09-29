@@ -19,7 +19,7 @@ function ServerPanel({ user, allUsers, setRoomId }: ServerPanelProps) {
   }
 
   return (
-    <div className="h-screen min-w-56 bg-base-300 pl-4 pr-8 pt-4">
+    <div className="relative h-screen min-w-56 bg-base-300 pl-4 pr-8 pt-4 shadow-lg">
       <h2 className="text-3xl">Server</h2>
       <div onClick={() => setRoomId(-1)} className="link">
         Server
@@ -40,9 +40,8 @@ function ServerPanel({ user, allUsers, setRoomId }: ServerPanelProps) {
           );
         })}
       </div>
-      <h2 className="mt-4 text-3xl">Self</h2>
-      <div className="flex gap-4">
-        <div>{user.displayName}</div>
+      <div className="absolute bottom-0 left-0 right-0 mx-auto box-border flex flex-col gap-2 bg-base-300 p-4">
+        <div className="text-center text-accent">{user.displayName}</div>
         <button
           className="btn btn-accent btn-sm"
           onClick={() => void attemptLogOut()}

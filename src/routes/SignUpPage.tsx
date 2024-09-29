@@ -145,14 +145,14 @@ function SignUpPage() {
             })}
 
             <div className="card-actions justify-center">
-              <button className="btn btn-primary mt-4" type="submit">
+              <button className="btn btn-accent mt-4" type="submit">
                 Sign up
               </button>
             </div>
 
             <div className="mt-8 text-center text-neutral-content">
               Already have an account?{' '}
-              <Link to="/login" className="link link-primary">
+              <Link to="/login" className="link link-accent">
                 Log in
               </Link>
             </div>

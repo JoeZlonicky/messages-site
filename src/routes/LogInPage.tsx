@@ -36,7 +36,7 @@ function LogInPage() {
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="my-8 text-6xl text-primary">Messages</h1>
+      <h1 className="my-8 text-6xl text-accent">Messages</h1>
       <div className="card mx-auto w-full max-w-sm bg-neutral shadow-xl">
         <div className="card-body">
           <h2 className="card-title justify-center text-3xl">Log In</h2>
@@ -82,7 +82,7 @@ function LogInPage() {
             )}
 
             <div className="card-actions justify-center">
-              <button className="btn btn-primary mt-4" type="submit">
+              <button className="btn btn-accent mt-4" type="submit">
                 Log In{' '}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +97,7 @@ function LogInPage() {
 
             <div className="mt-8 text-center text-neutral-content">
               Need an account?{' '}
-              <Link to="/signup" className="link link-primary">
+              <Link to="/signup" className="link link-accent">
                 Sign up
               </Link>
             </div>
