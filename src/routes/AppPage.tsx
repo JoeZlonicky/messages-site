@@ -48,8 +48,6 @@ function AppPage() {
     return <>{loadingStatus}</>;
   }
 
-  console.log(messagesInRoom);
-
   return (
     <div className="flex">
       <ServerPanel user={user} allUsers={allUsers} setRoomId={setRoomId} />

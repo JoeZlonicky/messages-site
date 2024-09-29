@@ -1,5 +1,6 @@
 import { User } from '../../types/User';
 import { api } from '../api';
+import { getBadRequestErrors } from '../getBadRequestErrors';
 import { AxiosError } from 'axios';
 
 type LogInResult = {
@@ -7,19 +8,6 @@ type LogInResult = {
   message?: string;
   user?: User;
 };
-
-function getBadRequestErrors(error: AxiosError) {
-  const data = error?.response?.data;
-  if (
-    !(data instanceof Object) ||
-    !('errors' in data) ||
-    !Array.isArray(data.errors)
-  ) {
-    return null;
-  }
-
-  return data.errors.filter((msg) => typeof msg === 'string');
-}
 
 async function logIn(username: string, password: string): Promise<LogInResult> {
   try {
@@ -34,7 +22,7 @@ async function logIn(username: string, password: string): Promise<LogInResult> {
         message = errorMessages[0] as string;
       }
     }
-    return { success: false, message: message };
+    return { success: false, message };
   }
 }
 

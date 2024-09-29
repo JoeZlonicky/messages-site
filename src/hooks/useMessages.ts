@@ -7,7 +7,6 @@ import { io } from 'socket.io-client';
 
 const fetchMessages = async (roomId: number, userId: number) => {
   let result: GetMessagesResult;
-  console.log(roomId);
   if (roomId === -1) {
     result = await getServerMessages();
   } else {

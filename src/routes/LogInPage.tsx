@@ -97,8 +97,8 @@ function LogInPage() {
 
             <div className="mt-8 text-center text-neutral-content">
               Need an account?{' '}
-              <Link to="/register" className="link link-primary">
-                Register
+              <Link to="/signup" className="link link-primary">
+                Sign up
               </Link>
             </div>
           </form>
