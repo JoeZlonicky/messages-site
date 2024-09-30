@@ -75,7 +75,7 @@ function LogInPage() {
             </label>
 
             {infoMessage && (
-              <div className="mt-4 text-center text-info">{infoMessage}</div>
+              <div className="mt-4 text-center text-accent">{infoMessage}</div>
             )}
             {errorMessage && (
               <div className="mt-4 text-center text-error">{errorMessage}</div>

@@ -50,7 +50,12 @@ function AppPage() {
 
   return (
     <div className="flex">
-      <ServerPanel user={user} allUsers={allUsers} setRoomId={setRoomId} />
+      <ServerPanel
+        user={user}
+        allUsers={allUsers}
+        roomId={roomId}
+        setRoomId={setRoomId}
+      />
       <Room
         roomId={roomId}
         user={user}

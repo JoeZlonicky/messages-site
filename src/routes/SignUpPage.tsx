@@ -37,17 +37,22 @@ function SignUpPage() {
     if (result.success && result.user) {
       userDispatch({ type: 'logIn', user: result.user });
       navigate('/');
+      return;
     }
 
     setInfoMessage('');
     if (result.messages) {
-      setErrorMessages(result.messages);
+      let errorMessages = result.messages;
+      errorMessages = errorMessages.map((msg) =>
+        msg.replace('SignUpSecret', 'Secret Code'),
+      );
+      setErrorMessages(errorMessages);
     }
   }
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="my-8 text-6xl text-primary">Messages</h1>
+      <h1 className="my-8 text-6xl text-accent">Messages</h1>
       <div className="card mx-auto w-full max-w-sm bg-neutral shadow-xl">
         <div className="card-body">
           <h2 className="card-title justify-center text-3xl">Sign up</h2>
@@ -134,7 +139,7 @@ function SignUpPage() {
             </label>
 
             {infoMessage && (
-              <div className="mt-4 text-center text-info">{infoMessage}</div>
+              <div className="mt-4 text-center text-accent">{infoMessage}</div>
             )}
             {errorMessages.map((msg) => {
               return (

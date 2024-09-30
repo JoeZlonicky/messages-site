@@ -10,7 +10,8 @@ function getBadRequestErrors(error: AxiosError) {
     return null;
   }
 
-  return data.errors.filter((msg) => typeof msg === 'string');
+  const messages = data.errors.filter((msg) => typeof msg === 'string');
+  return messages.map((msg) => msg.at(0)?.toUpperCase() + msg.slice(1));
 }
 
 export { getBadRequestErrors };

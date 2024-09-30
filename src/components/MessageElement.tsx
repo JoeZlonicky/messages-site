@@ -7,11 +7,14 @@ type MessageElementProps = {
 };
 
 function MessageElement(props: MessageElementProps) {
+  let createdAtFormatted = formatRelative(props.message.createdAt, new Date());
+  createdAtFormatted =
+    createdAtFormatted.at(0)?.toUpperCase() + createdAtFormatted.slice(1);
   return (
     <div className="bg-neutral p-2">
       <div>
         <b>{props.message.fromUser.displayName}</b> -{' '}
-        <i>{formatRelative(props.message.createdAt, new Date())}</i>
+        <i>{createdAtFormatted}</i>
       </div>
       <div>{props.message.content}</div>
     </div>
