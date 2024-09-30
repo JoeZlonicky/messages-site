@@ -1,4 +1,4 @@
-import { Message } from '../types/Message';
+import { useMessages } from '../hooks/useMessages';
 import { User } from '../types/User';
 import { MessageElement } from './MessageElement';
 import { SendMessageBox } from './SendMessageBox';
@@ -10,29 +10,16 @@ type RoomProps = {
   roomId: number;
   user: User;
   allUsers: User[];
-  messagesInRoom: Map<number, Message[]>;
-  updateMessagesInRoom: (roomId: number, userId: number) => Promise<void>;
-  addMessageToRoom: (roomId: number, newMessage: Message) => void;
 };
 
-function Room({
-  roomId,
-  user,
-  allUsers,
-  messagesInRoom,
-  updateMessagesInRoom,
-  addMessageToRoom,
-}: RoomProps) {
+function Room({ roomId, user, allUsers }: RoomProps) {
   const getToUser = useCallback(() => {
     const found = allUsers.find((otherUser) => otherUser.id === roomId);
     return found;
   }, [allUsers, roomId]);
 
+  const [messages, addMessage] = useMessages(user.id, roomId);
   const messagesContainer = createRef<HTMLDivElement>();
-
-  useEffect(() => {
-    void updateMessagesInRoom(roomId, user.id);
-  }, [roomId, user]);
 
   useEffect(() => {
     if (!messagesContainer.current) {
@@ -41,9 +28,7 @@ function Room({
 
     messagesContainer.current.scrollTop =
       messagesContainer.current.scrollHeight;
-  }, [messagesInRoom]);
-
-  const messages = messagesInRoom.get(roomId);
+  }, [messages]);
 
   const messagesContent = !messages ? (
     <div className="flex flex-1 flex-col p-4 pb-0 italic">Loading...</div>
@@ -83,7 +68,7 @@ function Room({
       {messagesContent}
       <SendMessageBox
         toUserId={roomId}
-        addSentMessage={(message) => addMessageToRoom(roomId, message)}
+        addSentMessage={(message) => addMessage(message)}
       />
     </div>
   );

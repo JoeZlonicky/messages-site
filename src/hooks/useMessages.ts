@@ -2,63 +2,65 @@ import { getDirectMessages } from '../api/calls/getDirectMessages';
 import { getServerMessages } from '../api/calls/getServerMessages';
 import { GetMessagesResult } from '../types/GetMessagesResult';
 import { Message } from '../types/Message';
-import { useState } from 'react';
-import { io } from 'socket.io-client';
+import { useEffect, useState } from 'react';
+import { Socket, io } from 'socket.io-client';
 
-const fetchMessages = async (roomId: number, userId: number) => {
+const fetchMessages = async (userId: number, roomId: number) => {
   let result: GetMessagesResult;
   if (roomId === -1) {
     result = await getServerMessages();
   } else {
     result = await getDirectMessages(userId, roomId);
   }
-  return result?.messages;
+  return result?.messages || [];
 };
 
-const defaultMessagesInRoom = new Map<number, Message[]>();
+function useMessages(
+  userId: number,
+  roomId: number,
+): [messages: Message[], addMessage: (message: Message) => void] {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [socket, setSocket] = useState<Socket | null>();
 
-function useMessages(): [
-  Map<number, Message[]>,
-  (roomId: number, userId: number) => Promise<void>,
-  (roomId: number, newMessage: Message) => void,
-] {
-  const [messagesInRoom, setMessagesInRoom] = useState(defaultMessagesInRoom);
-  const initializedRooms = new Map<number, boolean>();
-
-  const socket = io(import.meta.env.VITE_MESSAGES_API_URL, {
-    withCredentials: true,
-  });
-
-  socket.on('message', (message: Message) => {
-    const roomId = message.toUser?.id || -1;
-    addMessageToRoom(roomId, message);
-  });
-
-  function addMessageToRoom(roomId: number, message: Message) {
-    setMessagesInRoom((map) => {
-      const messages = map.get(roomId) || [];
-      if (messages.find((msg) => msg.id === message.id)) {
-        return map;
-      }
-      return new Map(
-        map.set(roomId, (map.get(roomId) || []).concat([message])),
-      );
+  async function refresh() {
+    setMessages([]);
+    const fetchedMessages = await fetchMessages(userId, roomId);
+    setMessages((prev) => {
+      return fetchedMessages.concat(prev);
     });
   }
 
-  async function updateMessagesInRoom(roomId: number, userId: number) {
-    if (initializedRooms.get(roomId)) {
-      return;
+  useEffect(() => {
+    if (socket) {
+      socket.disconnect();
     }
+    const newSocket = io(import.meta.env.VITE_MESSAGES_API_URL, {
+      withCredentials: true,
+    });
 
-    const existingMessages = await fetchMessages(roomId, userId);
-    if (!initializedRooms.get(roomId) && existingMessages) {
-      setMessagesInRoom(new Map(messagesInRoom.set(roomId, existingMessages)));
-      initializedRooms.set(roomId, true);
-    }
+    newSocket.on('connect', () => {
+      void refresh();
+    });
+
+    newSocket.on('message', (message: Message) => {
+      const to = message.toUser?.id || -1;
+      if (to !== roomId) return;
+      addMessage(message);
+    });
+
+    setSocket(newSocket);
+  }, [userId, roomId]);
+
+  function addMessage(message: Message) {
+    setMessages((prev) => {
+      if (prev.find((msg) => msg.id === message.id)) {
+        return prev;
+      }
+      return prev.concat([message]);
+    });
   }
 
-  return [messagesInRoom, updateMessagesInRoom, addMessageToRoom];
+  return [messages, addMessage];
 }
 
 export { useMessages };

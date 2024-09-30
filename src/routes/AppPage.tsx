@@ -15,8 +15,6 @@ function AppPage() {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [roomId, setRoomId] = useState(-1);
   const [loadingStatus, setLoadingStatus] = useState('Loading...');
-  const [messagesInRoom, updateMessagesInRoom, addMessageToRoom] =
-    useMessages();
 
   useEffect(() => {
     const fetchUserIfNeeded = async () => {
@@ -56,14 +54,7 @@ function AppPage() {
         roomId={roomId}
         setRoomId={setRoomId}
       />
-      <Room
-        roomId={roomId}
-        user={user}
-        allUsers={allUsers}
-        messagesInRoom={messagesInRoom}
-        updateMessagesInRoom={updateMessagesInRoom}
-        addMessageToRoom={addMessageToRoom}
-      />
+      <Room roomId={roomId} user={user} allUsers={allUsers} />
     </div>
   );
 }
