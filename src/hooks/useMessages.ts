@@ -26,7 +26,10 @@ function useMessages(
     setMessages([]);
     const fetchedMessages = await fetchMessages(userId, roomId);
     setMessages((prev) => {
-      return fetchedMessages.concat(prev);
+      const earlierMessages = fetchedMessages.filter(
+        (msg) => !prev.find((prevMsg) => prevMsg.id === msg.id),
+      );
+      return earlierMessages.concat(prev);
     });
   }
 
