@@ -1,27 +1,21 @@
-import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
+import { useNavigate, useRouteError } from 'react-router-dom';
 
 function ErrorPage() {
   const error = useRouteError();
+  const navigate = useNavigate();
 
   console.error(error);
 
-  let errorMessage: string;
-  if (isRouteErrorResponse(error)) {
-    errorMessage = error.statusText;
-  } else if (error instanceof Error) {
-    errorMessage = error.message;
-  } else if (typeof error === 'string') {
-    errorMessage = error;
-  } else {
-    errorMessage = 'Uknown error';
-  }
-
   return (
-    <div id="error-page">
-      <h1>Oops!</h1>
-      <p>Sorry, an unexpected error has occcurred.</p>
-      <p>
-        <i>{errorMessage}</i>
+    <div className="my-8 text-center">
+      <h1 className="text-6xl text-accent">Oops!</h1>
+      <p className="my-2">Sorry, an unexpected error has occcurred.</p>
+      <p className="">
+        Return to the{' '}
+        <span className="link text-accent" onClick={() => navigate('/')}>
+          main page
+        </span>
+        .
       </p>
     </div>
   );
