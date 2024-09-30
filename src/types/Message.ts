@@ -6,7 +6,7 @@ type Message = {
 
   id: number;
   content: string;
-  createdAt: Date;
+  createdAt: string;
 };
 
 export type { Message };

@@ -26,6 +26,7 @@ function SendMessageBox({ toUserId, addSentMessage }: SendMessageBoxProps) {
       onSubmit={(event: FormEvent) => {
         void attemptSendMessage(event);
       }}
+      className="border-t-2 border-t-accent"
     >
       <div className="m-4 flex gap-2">
         <input

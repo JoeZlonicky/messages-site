@@ -1,7 +1,8 @@
 import { Message } from '../types/Message';
 import { User } from '../types/User';
+import { MessageElement } from './MessageElement';
 import { SendMessageBox } from './SendMessageBox';
-import { useCallback, useEffect, useState } from 'react';
+import { createRef, useCallback, useEffect, useState } from 'react';
 
 type RoomProps = {
   roomId: number;
@@ -23,29 +24,43 @@ function Room({
   const getToUser = useCallback(() => {
     const found = allUsers.find((otherUser) => otherUser.id === roomId);
     return found;
-  }, [roomId]);
+  }, [allUsers, roomId]);
+
+  const messagesContainer = createRef<HTMLDivElement>();
 
   useEffect(() => {
     void updateMessagesInRoom(roomId, user.id);
   }, [roomId, user]);
 
+  useEffect(() => {
+    console.log('Updating scroll...');
+    if (!messagesContainer.current) {
+      return;
+    }
+
+    console.log('Set');
+    messagesContainer.current.scrollTop =
+      messagesContainer.current.scrollHeight;
+  }, [messagesInRoom]);
+
   const messages = messagesInRoom.get(roomId);
 
   const messagesContent = !messages ? (
-    <div className="flex flex-1 flex-col justify-end p-4 pb-0 italic">
-      Loading...
-    </div>
+    <div className="flex flex-1 flex-col p-4 pb-0 italic">Loading...</div>
   ) : messages.length === 0 ? (
-    <div className="flex flex-1 flex-col justify-end p-4 pb-0 italic">
-      No messages yet
-    </div>
+    <div className="flex flex-1 flex-col p-4 pb-0 italic">No messages yet</div>
   ) : (
-    <div className="flex flex-1 flex-col justify-end p-4 pb-0">
+    <div
+      className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pb-4"
+      ref={messagesContainer}
+    >
       {messages.map((message) => {
         return (
-          <div key={message.id}>
-            {message.fromUser.displayName} - {message.content}
-          </div>
+          <MessageElement
+            message={message}
+            isBySelf={message.fromUser.id === user.id}
+            key={message.id}
+          />
         );
       })}
     </div>
@@ -72,7 +87,7 @@ function Room({
   let roomName = roomId === -1 ? 'Server' : getToUser()?.displayName;
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex h-screen flex-1 flex-col">
       <h2 className="flex items-center gap-4 bg-accent p-4 text-3xl text-accent-content shadow-lg">
         {icon}
         {roomName}
